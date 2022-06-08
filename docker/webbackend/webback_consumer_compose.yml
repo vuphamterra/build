@@ -1,0 +1,18 @@
+version: '2'
+services:
+ nodelive247:
+    image: vuphamterra/live247-emr-webapp-backend
+    restart: always
+    hostname: nodelive247
+    container_name: nodelive247
+    ports:
+      - "7124:7124"
+    extra_hosts:
+      - "influx_server kafka_broker sensor_consumer alerta redis_server postgres mysql:10.0.0.10"
+    environment:
+      - "REDIS_SECURE:sOmE_sEcUrE_pAsS"
+      - "REDIS_PORT:6379"
+      - "INFLUX_PORT:8080"
+      - "NODEBACKEND_PORT:7124"
+
+

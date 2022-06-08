@@ -1,0 +1,22 @@
+version: '2'
+services:
+  alerta-db:
+    image: mongo
+    hostname: alerta-db
+    container_name: alerta-db
+    ports:
+      - "27071:27071"
+      - "27017:27017"
+
+  alerta-web:
+    image: registry.live247.ai:443/alerta_web_srvr 
+    hostname: alerta-web
+    container_name: alerta-web
+    depends_on:
+      - alerta-db
+    ports:
+      - "8999:8080"
+    environment:
+      - DATABASE_URL=mongodb://db:27017/monitoring
+    extra_hosts:
+      - "db:10.0.0.5"

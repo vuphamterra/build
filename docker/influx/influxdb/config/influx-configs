@@ -1,0 +1,26 @@
+[default]
+  url = "http://localhost:8086"
+  token = "tmIOhqcmwTNW-iJH_nGfxFc3gamhErX2qztf01bPY9lgWDogntHWTCgG2KMMoDgzUbR-E6qWO08nZ8Ud0F_S8w=="
+  org = "test_org"
+  previous = true
+
+[mbProd]
+  url = "http://localhost:8086"
+  token = "prodToken"
+  org = "test_org"
+  active = true
+# 
+# [eu-central]
+#   url = "https://eu-central-1-1.aws.cloud2.influxdata.com"
+#   token = "XXX"
+#   org = ""
+# 
+# [us-central]
+#   url = "https://us-central1-1.gcp.cloud2.influxdata.com"
+#   token = "XXX"
+#   org = ""
+# 
+# [us-west]
+#   url = "https://us-west-2-1.aws.cloud2.influxdata.com"
+#   token = "XXX"
+#   org = ""

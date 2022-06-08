@@ -1,0 +1,32 @@
+docker-compose -f docker-compose.yml up -d ===> use this
+docker-compose -f openemr-compose.yml up -d
+
+
+
+For Cleanup
+docker-compose down
+docker rm -f $(docker ps -a -q)
+docker volume rm $(docker volume ls -q)
+docker rmi  $(docker images -a -q)
+
+
+#Postgress - DRUG DB
+  sudo docker-compose -f postgres-compose.yml up -d
+  sudo docker exec -it a1c38b2acf3d bash
+  #https://drugcentral.org/ActiveDownload
+  wget http://unmtid-shinyapps.net/download/drugcentral-pgdump_20200918.sql.gz
+  gunzip drugcentral-pgdump_20200918.sql.gz
+  sudo docker cp drugcentral-pgdump_20200918.sql a1c38b2acf3d:/tmp/
+  psql  -d test_db -U root -f /tmp/drugcentral-pgdump_20200918.sql
+
+  Admniner
+  postgres, 10.0.0.5, root, root, test_db
+
+
+
+
+#Jitsi
+  https://www.tecmint.com/install-jitsi-meet-on-debian-and-ubuntu/
+  vi /etc/prosody/conf.avail/meet.live247.ai.cfg.lua
+  sudo prosodyctl register emr meet.live247.ai SEcureP@$$wd#
+  systemctl restart prosody && sudo systemctl restart jicofo && sudo systemctl restart jitsi-videobridge2

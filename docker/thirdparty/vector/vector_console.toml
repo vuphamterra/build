@@ -1,0 +1,22 @@
+[sources.in]
+  type = "kafka" # required
+  bootstrap_servers = "127.0.0.1:9092" # required
+  group_id = "consumer-group-name" # required
+  #key_field = "message_key" # optional, no default
+  topics = ["MyBigData"] # required
+  #topics = ["^(prefix1|prefix2)-.+", "topic-1", "topic-2"] # required
+
+[sinks.out]
+  # General
+  #bucket = "vector-bucket" # required
+  #	database = "vector-database" # required
+  #	endpoint = "http://localhost:8086/" # required
+  inputs = ["in"] # required
+  type = "console"
+  encoding.codec = "text"
+  	#namespace = "service" # required
+  	#type = "influxdb_metrics" # required
+
+  # Auth
+  #org = "my-org" # required
+  #token = "" # required

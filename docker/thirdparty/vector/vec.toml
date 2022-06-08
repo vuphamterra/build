@@ -1,0 +1,7 @@
+[sources.foo]
+  type = "stdin"
+
+[sinks.bar]
+  inputs = ["foo"]
+  type = "console"
+  encoding.codec = "text"

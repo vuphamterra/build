@@ -1,0 +1,8 @@
+{
+  "query-concurrency": 20,
+  "query-queue-size": 15,
+  "log-level":"info"
+}
+
+
+

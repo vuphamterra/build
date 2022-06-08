@@ -1,0 +1,10 @@
+version: '2'
+services:
+ sensor-consumer:
+    image: registry.live247.ai:443/sensor_simulator
+    restart: always
+    hostname: sensor_simulator
+    container_name: sensor_simulator
+    extra_hosts:
+      - "redisSvr1 kafkaBroker1 influxdbSvr baseliner alertaApp1:10.0.0.5"
+

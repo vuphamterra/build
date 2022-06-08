@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -e
+
+service nginx restart
+#/opt/alerta/bin/uwsgi --ini /etc/uwsgi.ini &
+
+wait -n

@@ -1,0 +1,18 @@
+mysql:
+  image: mysql:5.7
+  restart: always
+  ports:
+    - "3306:3306"
+  environment:
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_USER: live247_emr
+    MYSQL_PASSWORD: live247_emr
+    MYSQL_DATABASE: openemr
+  volumes:
+    - ./data:/docker-entrypoint-initdb.d
+    #      - ./data:/opt/mysql/
+adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080

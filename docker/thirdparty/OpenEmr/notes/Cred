@@ -1,0 +1,13 @@
+phpmyadmin - 
+
+http://localhost:8082/?server=mysql&username=root  ---> root ---> server is mysql
+
+OpenEMR admin/pass
+
+mariadb  - root - root
+
+    The FHIR server: http://localhost:8080/home
+    The OpenEMR server: http://localhost
+
+Change the property Enable FHIR Provider Client Service to the value On: HAPI FHIR.
+Change the property FHIR Server Base Address to the value http://fhir:8080/baseDstu3/

@@ -1,0 +1,99 @@
+make sure to boot with intel_iommu=on for the main ubuntu
+
+
+echo "8086 a370" > /sys/bus/pci/drivers/pci-stub/new_id
+echo "0000:00:14.3" > /sys/bus/pci/devices/0000:00:14.3/driver/unbind
+echo "0000:00:14.3" > /sys/bus/pci/drivers/pci-stub/bind
+#echo "0000:00:14.3" > /sys/bus/pci/drivers/pci-stub/unbind
+VFIO - PCI express through - as pci-device is not supported with aarch64
+sudo modprobe -v vfio-pci
+sudo modprobe -v vfio_iommu_type1 allow_unsafe_interrupts=1
+echo vfio-pci > /sys/bus/pci/devices/0000\:00\:14.3/driver_override
+echo "0000:00:14.3" > /sys/bus/pci/devices/0000:00:14.3/driver/unbind
+echo 0000:00:14.3 > /sys/bus/pci/drivers_probe
+
+
+this somewhat works from qemu - but the device has msi-x issue -  MSI-X is not supported by interrupt controller
+qemu-system-aarch64 -nographic -machine virt,gic-version=max -m 512M -cpu max -smp 4 -netdev user,id=vnet,hostfwd=:127.0.0.1:0-:22 -device virtio-net-pci,netdev=vnet -drive file=ubuntu-image.img,if=none,id=drive0,cache=writeback -device virtio-blk,drive=drive0,bootindex=0 -drive file=flash0.img,format=raw,if=pflash -drive file=flash1.img,format=raw,if=pflash -device vfio-pci,host=00:14.3
+
+sudks@ubuntuarm:~$ sudo ip link set dev wlp0s3 up
+[sudo] password for sudks: 
+sudks@ubuntuarm:~$ iqemu-system-aarch64: VFIO_MAP_DMA: -14
+qemu-system-aarch64: vfio_dma_map(0x55bb7039e400, 0x8000008000, 0x4000, 0x7f2399ade000) = -14 (Bad address)
+p a
+
+
+
+### This does not work
+#
+root@sudks-G3-3579:/home/sudks/qemu# qemu-system-aarch64 -nographic -machine virt,gic-version=max -m 512M -cpu max -smp 4 \
+> -netdev user,id=vnet,hostfwd=:127.0.0.1:0-:22 -device virtio-net-pci,netdev=vnet \
+> -drive file=ubuntu-image.img,if=none,id=drive0,cache=writeback -device virtio-blk,drive=drive0,bootindex=0 \
+> -drive file=flash0.img,format=raw,if=pflash -drive file=flash1.img,format=raw,if=pflash -device pci-assign,host=00:14.3
+WARNING: Image format was not specified for 'ubuntu-image.img' and probing guessed raw.
+         Automatically detecting the format is dangerous for raw images, write operations on block 0 will be restricted.
+         Specify the 'raw' format explicitly to remove the restrictions.
+qemu-system-aarch64: -device pci-assign,host=00:14.3: 'pci-assign' is not a valid device model name
+
+
+# this is with the xhci usb controller
+# lsusb -t --> gives the controller type - xhci, ehci etc
+qemu-system-aarch64 -nographic -machine virt,gic-version=max -m 512M -cpu max -smp 4 -netdev user,id=vnet,hostfwd=:127.0.0.1:0-:22 -device virtio-net-pci,netdev=vnet -drive file=ubuntu-image.img,if=none,id=drive0,cache=writeback -device virtio-blk,drive=drive0,bootindex=0 -drive file=flash0.img,format=raw,if=pflash -drive file=flash1.img,format=raw,if=pflash -device vfio-pci,host=00:14.3 -usb -device nec-usb-xhci,id=xhci,addr=0x5 -device usb-host,bus=xhci.0,vendorid=0x8087,productid=0x0aaa
+
+qemu-system-aarch64 -nographic -machine virt,gic-version=max -m 512M -cpu max -smp 4 -netdev user,id=vnet,hostfwd=:127.0.0.1:0-:22 -device virtio-net-pci,netdev=vnet -drive file=ubuntu-image.img,if=none,id=drive0,cache=writeback -device virtio-blk,drive=drive0,bootindex=0 -drive file=flash0.img,format=raw,if=pflash -drive file=flash1.img,format=raw,if=pflash  -usb -device nec-usb-xhci,id=xhci,addr=0x5 -device usb-host,bus=xhci.0,vendorid=0x8087,productid=0x0aaa
+
+
+#Working Bluetooth plus sharing folder
+sudo qemu-system-aarch64 -nographic -machine virt,gic-version=max -m 512M -cpu max -smp 4 -netdev user,id=vnet,hostfwd=:127.0.0.1:0-:22 -device virtio-net-pci,netdev=vnet -drive file=ubuntu-image.img,if=none,id=drive0,cache=writeback -device virtio-blk,drive=drive0,bootindex=0 -drive file=flash0.img,format=raw,if=pflash -drive file=flash1.img,format=raw,if=pflash  -usb -device nec-usb-xhci,id=xhci,addr=0x5 -device usb-host,bus=xhci.0,vendorid=0x8087,productid=0x0aaa -virtfs local,path=/home/sudks/,mount_tag=host0,security_model=mapped,id=host0
+
+
+#inside the guest
+sudo mount -t 9p -o trans=virtio,version=9p2000.L host0 /mnt/my9p
+
+
+dpkg --add-architecture armhf
+sudo apt-get update
+sudo apt-get install openjdk-8-jdk:armhf
+sudo update-alternatives --config java  # select the armhf java
+cd /home/sudks/EMR/Development/software/downloads/viva/Linux/2.2.0/VitalLinuxSDK2.2.0.20191015/VitalLinuxRelease/demo_app
+
+sudo java -Djava.library.path=/usr/local/lib/ -cp VitalLinuxSDK.jar VitalLinuxTest
+# select 1 
+# ECGRec_202016/C740098
+
+
+# sudks , C____1__$
+# BLuetooth, sharing folder, ssh working
+ qemu-system-aarch64 -nographic -machine virt,gic-version=max -m 512M -cpu max -smp 4 -netdev user,id=vnet,hostfwd=tcp::2222-:22 -device virtio-net-pci,netdev=vnet -drive file=ubuntu-image.img,if=none,id=drive0,cache=writeback -device virtio-blk,drive=drive0,bootindex=0 -drive file=flash0.img,format=raw,if=pflash -drive file=flash1.img,format=raw,if=pflash  -usb -device nec-usb-xhci,id=xhci,addr=0x5 -device usb-host,bus=xhci.0,vendorid=0x8087,productid=0x0aaa  -virtfs local,path=/home/sudks/,mount_tag=host0,security_model=mapped,id=host0
+
+
+ssh sudks@localhost -p 2222 -vvv
+
+
+cd /mnt/my9p/Projects/EMR/Development/software/downloads/viva/Linux/2.2.0/VitalLinuxSDK2.2.0.20191015/VitalLinuxRelease/demo_src/src
+
+javac -cp ../../demo_app/VitalLinuxSDK.jar VitalLinuxTest.java 
+
+# java.library.path is the for the arm native jdk which viva provides and the -cp for the sdk of viva ecg
+sudo java -Djava.library.path=/usr/local/lib/ -cp ../../demo_app/VitalLinuxSDK.jar VitalLinuxTest
+
+# SUDKS JAVA
+                                                                                                    
+cd /mnt/my9p/Projects/EMR/Development/software/downloads/viva/Linux/2.2.0/VitalLinuxSDK2.2.0.20191015/VitalLinuxRelease/demo_src/src
+sudo javac -cp ../../demo_app/VitalLinuxSDK.jar:/mnt/my9p/Framework/emr/kafka/kafka_2.12-2.3.1/libs/kafka-clients-2.3.1.jar SudksVitalLinuxTest.java
+                                                                                                     
+sudo java -verbose:class -Djava.library.path=/usr/local/lib/ -cp ../../demo_app/VitalLinuxSDK.jar:. SudksVitalLinuxTest
+sudo java -Djava.library.path=/usr/local/lib/ -cp ../../demo_app/VitalLinuxSDK.jar:. SudksVitalLinuxTest
+
+
+#Few things to note - the kafka producer broker points to 192.168 - which is the host outside of the qemu on port 9092
+# Just make sure telnet for 9092 works 
+
+# working with kafka
+sudo javac -cp ../../demo_app/VitalLinuxSDK.jar:/mnt/my9p/Framework/emr/kafka/kafka_2.12-2.3.1/libs/* SudksVitalLinuxTest.java
+sudo java -Djava.library.path=/usr/local/lib/ -cp ../../demo_app/VitalLinuxSDK.jar:.:/mnt/my9p/Framework/emr/kafka/kafka_2.12-2.3.1/libs/* SudksVitalLinuxTest
+
+sudo java -Djava.library.path=/usr/local/lib/ -cp ../../demo_app/VitalLinuxSDK.jar:.:/mnt/my9p/Framework/emr/kafka/kafka_2.12-2.3.1/libs/* SudksVitalLinuxTest true 192.168.31.139:9092
+
+
+

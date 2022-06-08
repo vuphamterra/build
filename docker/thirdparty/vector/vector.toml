@@ -1,0 +1,16 @@
+[sources.in]
+  address = "127.0.0.1:8126" # required
+  type = "statsd" # required
+
+[sinks.out]
+  # General
+  bucket = "vector-bucket" # required
+  database = "vector-database" # required
+  endpoint = "http://localhost:8086/" # required
+  inputs = ["in"] # required
+  namespace = "service" # required
+  type = "influxdb_metrics" # required
+
+  # Auth
+  org = "my-org" # required
+  token = "" # required

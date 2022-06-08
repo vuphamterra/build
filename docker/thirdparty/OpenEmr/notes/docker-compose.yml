@@ -1,0 +1,14 @@
+phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    container_name: phpmyadmin
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      PMA_HOST: 127.0.0.1
+    ports:
+            - 8081:80
+    volumes:
+     - /sessions
+    links:
+        -           openemr_mysql_1
+            

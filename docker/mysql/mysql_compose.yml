@@ -1,0 +1,33 @@
+version: "3.5"
+
+volumes:
+  local_redis_data: {}
+
+services:
+  mysql:
+    image: mysql:5.7
+    command: --max_allowed_packet=32505856
+    restart: always
+    ports:
+      - "3306:3306"
+    container_name: mysql_emr
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: live247_emr
+      MYSQL_PASSWORD: live247_emr
+      MYSQL_DATABASE: openemr
+    volumes:
+      - ./data:/docker-entrypoint-initdb.d
+      #      - ./data:/opt/mysql/
+  adminer:
+      image: adminer
+      container_name: adminer
+      restart: always
+      ports:
+        - 8081:8081
+      environment:
+          PMA_HOST: mysql_emr
+          MYSQL_ROOT_PASSWORD: root
+networks:
+      redis_node_net:
+        external: true

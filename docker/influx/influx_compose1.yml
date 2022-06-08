@@ -1,0 +1,18 @@
+version: '3.3'
+services:
+  influxdb:
+    image: influxdb:2.0-alpine
+    environment:
+      - AUTH_ENABLED=false
+      - INFLUXDB_HTTP_AUTH_ENABLED=false
+      - INFLUXDB_DB=emr_dev
+      - INFLUXD_CONFIG_PATH=/etc/influxdb/influx2.json
+    volumes:
+      - ./influxdb/data:/var/lib/influxdb
+      - ./influxdb/config/:/etc/influxdb/
+    ports:
+      - "8086:8086"
+      - "8082:8082"
+      - "8089:8089/udp"
+    command : sh -c "/var/lib/influxdb/init.sh"
+        #command: /bin/sh -c "(sleep 10 && echo setting up user && influx setup -o test_org -b test-bucket -u influxdb -p influxdb -f) & influxd"

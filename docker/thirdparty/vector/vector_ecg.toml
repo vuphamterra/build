@@ -1,0 +1,57 @@
+[sources.in]
+  type = "kafka" # required
+  bootstrap_servers = "127.0.0.1:9092" # required
+  group_id = "consumer-group-name" # required
+  key_field = "message" # optional, no default
+  topics = ["ecg"] # required
+  #topics = ["^(prefix1|prefix2)-.+", "topic-1", "topic-2"] # required
+
+#[transforms.my_transform_id]
+#  # General
+#  type = "add_tags" # required
+#  inputs = ["in"] # required
+#  overwrite = true # optional, default
+#
+#  # Tags
+#  tags.static_tag = "my value" # example
+#  tags.env_tag = "${ENV_VAR}" # example
+
+
+[transforms.my_transform_id]
+  # General
+  type = "add_fields" # required
+  inputs = ["in"] # required
+  overwrite = true # optional, default
+
+  # Fields
+  fields.string_field = "string value" # example
+
+[transforms.log_to_metric]
+  type = "log_to_metric"
+
+  inputs = ["in"] # required
+  [[transforms.log_to_metric.metrics]]
+    type = "histogram"
+    field = "time"
+    name = "time_ms" # optional
+    tags.status = "{{status}}" # optional
+    tags.host = "{{host}}" # optional
+
+[sinks.out]
+  # General
+  #bucket = "vector-bucket" # required
+database = "vector-database" # required
+endpoint = "http://localhost:8086/" # required
+#  inputs = ["log_to_metric"] # required
+  inputs = ["my_transform_id"] # required
+namespace = "ecg" # required
+tags = ["field1","parent.child_field"]
+#type = "influxdb_metrics" # required
+type = "influxdb_logs" # required
+#retention_policy_name = "one_day_only"
+  # Auth
+  #org = "my-org" # required
+  #token = "" # required
+#  inputs = ["in"] # required
+#  type = "console"
+#  encoding.codec = "text"

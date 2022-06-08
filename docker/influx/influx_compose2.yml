@@ -1,0 +1,19 @@
+version: '3.3'
+services:
+  influxdb:
+    image: influxdb:2.0-alpine
+    environment:
+      - AUTH_ENABLED=false
+      - INFLUXDB_HTTP_AUTH_ENABLED=false
+      - INFLUXDB_ADMIN_USER=live247_influx
+      - INFLUXDB_ADMIN_PASSWORD=live247_influx
+      - INFLUX_CONFIGS_PATH=/etc/influxdb/influx-configs
+      - INFLUXDB_DB=influx
+    volumes:
+      - ./influxdb/data:/var/lib/influxdb
+      - ./influxdb/config/:/etc/influxdb/
+    ports:
+      - "8086:8086"
+      - "8082:8082"
+      - "8089:8089/udp"
+        #    command : sh -c "/var/lib/influxdb/init.sh"

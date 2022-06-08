@@ -1,0 +1,22 @@
+version: '2'
+services:
+ sensor-consumer:
+    image: registry.live247.ai:443/sensor_consumer_img
+    restart: always
+    hostname: sensor_consumer
+    container_name: sensor_consumer
+    ports:
+      - "9000:9001"
+    extra_hosts:
+      - "redisSvr1 kafkaBroker1 influxdbSvr baseliner alertaApp1:10.0.0.9"
+
+ baseliner:
+    image: registry.live247.ai:443/baseliner_testing
+    restart: always
+    hostname: baseliner
+    container_name: baseliner
+    ports:
+      - "9010:9011"
+    extra_hosts:
+      - "redisSvr1 kafkaBroker1 influxdbSvr baseliner alertaApp1:10.0.0.9"
+
