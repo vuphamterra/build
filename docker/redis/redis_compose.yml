@@ -16,5 +16,5 @@ services:
         - local_redis_data:/data
 
 networks:
-  redis_node_net:
+  live247_net:
     external: true

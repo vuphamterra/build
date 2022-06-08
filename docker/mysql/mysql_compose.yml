@@ -29,5 +29,5 @@ services:
           PMA_HOST: mysql_emr
           MYSQL_ROOT_PASSWORD: root
 networks:
-      redis_node_net:
+      live247_net:
         external: true
