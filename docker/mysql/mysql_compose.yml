@@ -14,7 +14,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: live247_emr
-      MYSQL_PASSWORD: live247_just_a_password
+      MYSQL_PASSWORD: takeitthenyouaredog2104@#
       MYSQL_DATABASE: openemr
     volumes:
       - ./data:/docker-entrypoint-initdb.d
