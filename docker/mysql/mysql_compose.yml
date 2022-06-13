@@ -18,16 +18,3 @@ services:
       MYSQL_DATABASE: openemr
     volumes:
       - ./data:/docker-entrypoint-initdb.d
-      #      - ./data:/opt/mysql/
-  adminer:
-      image: adminer
-      container_name: adminer
-      restart: always
-      ports:
-        - 8080:8080
-      environment:
-          PMA_HOST: mysql_emr
-          MYSQL_ROOT_PASSWORD: root
-networks:
-      live247_net:
-        external: true
